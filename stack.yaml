@@ -1,4 +1,4 @@
-resolver: lts-9.18
+resolver: lts-8.19
 
 packages:
   - .
@@ -6,6 +6,7 @@ packages:
 extra-deps:
   - cassava-0.5.1.0
   - text-short-0.1.1
+  - Only-0.1
 
 flags:
   cassava:

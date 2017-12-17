@@ -4,35 +4,40 @@ module Data.Test
 
 import qualified Data.ByteString.Lazy   as LBS
 import qualified Data.Csv               as CSV
+import           Data.Maybe
 import           Data.Monoid
 import           Data.Vector
 
 import           Data.Event
--- import           Data.Exchange
-import           Data.Exchange.Coinbase
--- import           Data.Exchange.Gemini
+import qualified Data.Exchange.Coinbase as Coinbase
+import qualified Data.Exchange.Gemini   as Gemini
 
 main :: IO ()
-main = do
+-- main = testCoinbase
+main = _testGemini
+
+_testCoinbase :: IO ()
+_testCoinbase = do
     bs <- LBS.readFile "./test_data/coinbase_edited.csv"
 
-    let (rows :: Vector CoinbaseRow) = either (\e -> error $ "Unable to decode CSV: " <> e) id $ CSV.decode CSV.HasHeader bs
-        events = toList $ toEvent <$> rows
+    let (rows :: Vector Coinbase.CoinbaseRow) = either (\e -> error $ "Unable to decode CSV: " <> e) id $ CSV.decode CSV.HasHeader bs
+        events = catMaybes $ toList $ Coinbase.toEvent <$> rows
         lots = computeLots events
         tax = findTaxableEvents events
 
     print lots
     print tax
 
+_testGemini :: IO ()
+_testGemini = do
+    bs <- LBS.readFile "./test_data/gemini.csv"
 
--- toEvent :: CoinbaseRow -> Event
--- toEvent row = if isPurchase
---     then PurchaseEvent Coinbase $
---         Purchase timestamp currency amount (get _transferTotal) (get _transferFee) (get _transferTotalCurrency)
---     else TransferEvent Coinbase $ Transfer timestamp currency amount (_to row)
---   where
---     isPurchase = isJust (_transferTotal row)
---     timestamp  = _timestamp (row :: CoinbaseRow)
---     currency   = _currency (row :: CoinbaseRow)
---     amount     = _amount (row :: CoinbaseRow)
---     get fn = fromJust (fn row)
+    let (rows :: Vector Gemini.GeminiRow) = either (\e -> error $ "Unable to decode CSV: " <> e) id $ CSV.decode CSV.HasHeader bs
+        events = catMaybes $ toList $ Gemini.toEvent <$> rows
+        lots = computeLots events
+        tax = findTaxableEvents events
+        holdings = computeHoldings lots
+
+    print lots
+    print tax
+    print holdings

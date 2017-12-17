@@ -8,9 +8,12 @@ module Data.Event.Types
     , Location(..)
     ) where
 
+import           Data.Time
+
 import qualified Data.Currency.Crypto as Currency
 import qualified Data.Currency.Fiat   as Currency
 import           Data.Exchange.Types
+import           Data.Util.RationalF
 
 
 data Event
@@ -26,56 +29,56 @@ data Location = ExchangeLocation Exchange | PrivateWalletLocation | UnknownLocat
 
 
 data Purchase = Purchase
-    { purchaseTimestamp :: String
-    , purchaseExchange  :: Exchange
-    , purchaseCrypto    :: Currency.Crypto
-    , purchaseAmount    :: Rational
-    , purchaseFiat      :: Currency.Fiat
-    , purchasePrice     :: Rational
-    , purchaseFee       :: Rational -- assume fee is always in FIAT
+    { purchaseTime     :: UTCTime
+    , purchaseExchange :: Exchange
+    , purchaseCrypto   :: Currency.Crypto
+    , purchaseAmount   :: RationalF
+    , purchaseFiat     :: Currency.Fiat
+    , purchasePrice    :: RationalF
+    , purchaseFee      :: RationalF -- assume fee is always in FIAT
     }
   deriving (Eq, Show)
 
 
 data Sale = Sale
-    { saleTimestamp :: String
-    , saleExchange  :: Exchange
-    , saleCrypto    :: Currency.Crypto
-    , saleAmount    :: Rational
-    , saleFiat      :: Currency.Fiat
-    , salePrice     :: Rational
-    , saleFee       :: Rational -- assume fee is always in FIAT
+    { saleTime     :: UTCTime
+    , saleExchange :: Exchange
+    , saleCrypto   :: Currency.Crypto
+    , saleAmount   :: RationalF
+    , saleFiat     :: Currency.Fiat
+    , salePrice    :: RationalF
+    , saleFee      :: RationalF -- assume fee is always in FIAT
     }
   deriving (Eq, Show)
 
 
 data Transfer = Transfer
-    { transferTimestamp :: String
-    , transferFrom      :: Location
-    , transferTo        :: Location
-    , transferCrypto    :: Currency.Crypto
-    , transferAmount    :: Rational
-    , transferFee       :: Rational
+    { transferTime   :: UTCTime
+    , transferFrom   :: Location
+    , transferTo     :: Location
+    , transferCrypto :: Currency.Crypto
+    , transferAmount :: RationalF
+    , transferFee    :: RationalF
     -- , transferAddress   :: String -- TODO: might be nice to have to private wallets
     }
   deriving (Eq, Show)
 
 data TradeItem = TradeItem
     { tradeItemCrypto          :: Currency.Crypto
-    , tradeItemAmount          :: Rational
-    , tradeItemUnderlyingValue :: Rational
+    , tradeItemAmount          :: RationalF
+    , tradeItemUnderlyingValue :: RationalF
     }
   deriving (Eq, Show)
 
 data Trade = Trade
-    { tradeTimestamp               :: String
+    { tradeTime                    :: UTCTime
     , tradeExchange                :: Exchange
     , tradeFromCrypto              :: Currency.Crypto
-    , tradeFromAmount              :: Rational
+    , tradeFromAmount              :: RationalF
     , tradeToCrypto                :: Currency.Crypto
-    , tradeToAmount                :: Rational
-    , tradeFee                     :: Rational -- Assume fee is always against `to` crypto type, for now
+    , tradeToAmount                :: RationalF
+    , tradeFee                     :: RationalF -- Assume fee is always against `to` crypto type, for now
     , tradeItemUnderlyingValueFiat :: Currency.Fiat
-    , tradeItemUnderlyingValue     :: Rational
+    , tradeItemUnderlyingValue     :: RationalF
     }
   deriving (Eq, Show)

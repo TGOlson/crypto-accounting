@@ -4,8 +4,17 @@
 
 module Data.CSV.Instances () where
 
-import Data.Csv
-import Data.Scientific
+import qualified Data.ByteString.Char8 as C8
+import           Data.Csv
+import           Data.Monoid
+import           Data.Time
+import           Safe
 
-instance FromField Rational where
-    parseField bs = toRational <$> (parseField bs :: Parser Scientific)
+parseWithRead :: Read a => String -> C8.ByteString -> Parser a
+parseWithRead tag bs = maybe err pure $ readMay str
+  where
+    str = C8.unpack bs
+    err = fail $ "Unable to parse " <> tag <> " from '" <> str <> "'"
+
+instance FromField UTCTime where
+    parseField = parseWithRead "UTCTime"

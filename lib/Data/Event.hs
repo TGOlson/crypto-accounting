@@ -9,24 +9,28 @@ module Data.Event
     , Location(..)
     -- , getHoldings
     , computeLots
+    , computeHoldings
     , findTaxableEvents
     , findLotSplits
     ) where
 
 import           Control.Arrow
+import           Data.List
+import           Data.Time
 
 import qualified Data.Currency.Crypto as Currency
 import qualified Data.Currency.Fiat   as Currency
 import           Data.Event.Types
--- import qualified Data.HashMap.Strict  as H
+import qualified Data.HashMap.Strict  as H
+import           Data.Util.RationalF
 
 
 -- Note: probably not useful
 -- can instead get lots, and sum lots
--- getHoldings :: [Event] -> H.HashMap Currency.Crypto Rational
+-- getHoldings :: [Event] -> H.HashMap Currency.Crypto RationalF
 -- getHoldings events = H.fromListWith (+) (events >>= pairs)
 --   where
---     pairs :: Event -> [(Currency.Crypto, Rational)]
+--     pairs :: Event -> [(Currency.Crypto, RationalF)]
 --     pairs = \case PurchaseEvent _ p -> pure (purchaseCrypto p, purchaseAmount p)
 --                   SaleEvent     _ s -> pure (saleCrypto s, negate $ saleAmount s)
 --                   TransferEvent _ _ -> mempty -- TODO: subtract fees
@@ -36,9 +40,8 @@ import           Data.Event.Types
 --                       ]
 
 data TaxableEvent = TaxableEvent
-    { taxableEventTimestamp  :: String
-    , taxableEventCurrency   :: Currency.Fiat
-    , taxableEventNet        :: Rational
+    { taxableEventCurrency   :: Currency.Fiat
+    , taxableEventNet        :: RationalF
     , taxableEventUnderlying :: Event
     , taxableEventLotsUsed   :: [Lot]
     }
@@ -64,11 +67,11 @@ data TaxableEvent = TaxableEvent
 --     * use fee to reduce cost basis
 --     * calculate cost basis and cost basis per share
 
--- TODO: timestamp
 data Lot = Lot
-    { lotCrypto    :: Currency.Crypto
-    , lotAmount    :: Rational
-    , lotCostBasis :: Rational
+    { lotTime      :: UTCTime
+    , lotCrypto    :: Currency.Crypto
+    , lotAmount    :: RationalF
+    , lotCostBasis :: RationalF
     , lotLocation  :: Location
     }
   deriving (Eq, Show)
@@ -76,28 +79,33 @@ data Lot = Lot
 computeLots :: [Event] -> [Lot]
 computeLots = fst . foldl findTaxableEventWithLots mempty
 
+computeHoldings :: [Lot] -> H.HashMap Currency.Crypto RationalF
+computeHoldings lots = H.fromListWith (+) amounts
+  where
+    amounts = (lotCrypto &&& lotAmount) <$> lots
+
 findTaxableEvents :: [Event] -> [TaxableEvent]
 findTaxableEvents = snd . foldl findTaxableEventWithLots mempty
 
 findTaxableEventWithLots :: ([Lot], [TaxableEvent]) -> Event -> ([Lot], [TaxableEvent])
 findTaxableEventWithLots (lots, taxEvents) event =
     case event of
-        PurchaseEvent (Purchase _ts ex crypto amount _fiat price fee) ->
-            let lot = Lot crypto amount (price + fee) (ExchangeLocation ex)
+        PurchaseEvent (Purchase ts ex crypto amount _fiat price fee) ->
+            let lot = Lot ts crypto amount (price + fee) (ExchangeLocation ex)
             in (lots ++ [lot], taxEvents)
-        SaleEvent (Sale ts ex crypto amount fiat price fee) ->
+        SaleEvent (Sale _ts ex crypto amount fiat price fee) ->
             let (usedLots, remainingLots) = findLotSplits (ExchangeLocation ex) crypto amount lots
                 totalCostBasis = sum (lotCostBasis <$> usedLots)
                 net = price - fee - totalCostBasis
-                taxableEvent = TaxableEvent ts fiat net event usedLots
+                taxableEvent = TaxableEvent fiat net event usedLots
             in (remainingLots, taxableEvent : taxEvents)
-        TransferEvent (Transfer _ts from to crypto amount fee) ->
+        TransferEvent (Transfer ts from to crypto amount fee) ->
             let (usedLots, remainingLots) = findLotSplits from crypto amount lots
                 totalTransferred = sum $ lotAmount <$> usedLots
                 updatedUsedLots = (\l -> l {lotLocation = to, lotAmount = lotAmount l - (lotAmount l / totalTransferred * fee)  }) <$> usedLots
                 -- if there is no previous lot for the transfer, create a new lot with a cost basis of zero
                 -- later on, this should be tagged with a note stating the inconsistency so that a user could update the lot
-                updatedUsedLots' = if null updatedUsedLots then pure $ Lot crypto (amount  - fee) 0.0 to else updatedUsedLots
+                updatedUsedLots' = if null updatedUsedLots then pure $ Lot ts crypto (amount  - fee) 0.0 to else updatedUsedLots
 
             -- TODO: should these lots be appended?
             -- Lot might need a timestamp of when they were created
@@ -106,8 +114,8 @@ findTaxableEventWithLots (lots, taxEvents) event =
             let (usedLots, remainingLots) = findLotSplits (ExchangeLocation ex) fromCrypto fromAmount lots
                 totalCostBasis = sum (lotCostBasis <$> usedLots)
                 net = underlyingValue - totalCostBasis
-                taxableEvent = TaxableEvent ts fiat net event usedLots
-                newLot = Lot toCrypto (toAmount - fee) underlyingValue (ExchangeLocation ex)
+                taxableEvent = TaxableEvent fiat net event usedLots
+                newLot = Lot ts toCrypto (toAmount - fee) underlyingValue (ExchangeLocation ex)
                 -- TODO: register this trade as a tax event
             in (newLot : remainingLots, taxableEvent : taxEvents)
 
@@ -116,11 +124,11 @@ findTaxableEventWithLots (lots, taxEvents) event =
 -- TODO: lot picking strategy
 -- right now this uses FIFO
 -- TODO: UnknownLot location when we can't find a lot in the bunch
--- TODO: Lots should be :: Map Location (Map Crypto Rational)
-findLotSplits :: Location -> Currency.Crypto -> Rational -> [Lot] -> ([Lot], [Lot])
-findLotSplits loc crypto amount lots = (\(x, y, _z) -> (reverse x, reverse y)) $ foldl moveLot (mempty, mempty, 0.0) lots
+-- TODO: Lots should be :: Map Location (Map Crypto RationalF)
+findLotSplits :: Location -> Currency.Crypto -> RationalF -> [Lot] -> ([Lot], [Lot])
+findLotSplits loc crypto amount lots = (\(x, y, _z) -> (reverse x, reverse y)) $ foldl moveLot (mempty, mempty, 0.0) (sortOn lotTime lots) -- TODO: better lot sorting strategy
   where
-    moveLot :: ([Lot], [Lot], Rational) -> Lot -> ([Lot], [Lot], Rational)
+    moveLot :: ([Lot], [Lot], RationalF) -> Lot -> ([Lot], [Lot], RationalF)
     moveLot (usedLots, unusedLots, used) lot | used == amount        = (usedLots, lot : unusedLots, used)
     moveLot (usedLots, unusedLots, used) lot | not (isUsableLot lot) = (usedLots, lot : unusedLots, used)
     moveLot (usedLots, unusedLots, used) lot =
@@ -137,7 +145,7 @@ findLotSplits loc crypto amount lots = (\(x, y, _z) -> (reverse x, reverse y)) $
                     partialLeft   = lot { lotAmount = available - needed, lotCostBasis = leftCostBasis }
                 in (partialUsed : usedLots, partialLeft : unusedLots, needed + used)
 
-    isUsableLot (Lot c _ _ l) = c == crypto && l == loc
+    isUsableLot (Lot _ c _ _ l) = c == crypto && l == loc
 
 -- data EventResult = EventResult
 --     { lotsUsed     :: [Lot]
