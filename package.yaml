@@ -1,0 +1,63 @@
+name:                crypto-accounting
+version:             0.0.0
+synopsis:            taaaxxxxxessss
+description:         Please see README.md
+homepage:            https://github.com/TGOlson/TODO
+license:             BSD3
+author:              Tyler Olson
+maintainer:          tydotg@gmail.com
+copyright:           2017 Tyler Olson
+category:            Crypto
+extra-source-files:
+  - README.md
+
+ghc-options: -Wall
+
+default-extensions:
+  - DeriveGeneric
+  - DisambiguateRecordFields
+  - DuplicateRecordFields
+  - LambdaCase
+  - OverloadedStrings
+  - ScopedTypeVariables
+
+dependencies:
+  - base >= 4.7 && < 5
+  - bytestring
+  - cassava
+  - containers
+  - hashable
+  - optparse-generic
+  - safe
+  - scientific
+  - vector
+  - unordered-containers
+
+library:
+  source-dirs: lib
+  exposed-modules:
+    - Data.Test
+    - Data.Currency.Crypto
+    - Data.Currency.Fiat
+    - Data.Event
+    - Data.Event.Types
+    - Data.Exchange.Types
+    - Data.Exchange.Coinbase
+    - Data.Exchange.Gemini
+
+executables:
+  crypto-accounting:
+    source-dirs: exec
+    main: Main.hs
+    dependencies: crypto-accounting
+
+tests:
+  spec:
+    main: Main.hs
+    source-dirs:
+      - test
+    dependencies:
+      - crypto-accounting
+      - hspec
+      - QuickCheck
+      - quickcheck-instances

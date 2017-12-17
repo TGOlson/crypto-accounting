@@ -1,0 +1,14 @@
+resolver: lts-9.18
+
+packages:
+  - .
+
+extra-deps:
+  - cassava-0.5.1.0
+  - text-short-0.1.1
+
+flags:
+  cassava:
+    bytestring--lt-0_10_4: false
+
+extra-package-dbs: []
