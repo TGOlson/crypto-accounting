@@ -15,8 +15,10 @@ module Data.Event
     ) where
 
 import           Control.Arrow
+import           Data.Aeson
 import           Data.List
 import           Data.Time
+import           GHC.Generics         hiding (from, to)
 
 import qualified Data.Currency.Crypto as Currency
 import qualified Data.Currency.Fiat   as Currency
@@ -25,27 +27,15 @@ import qualified Data.HashMap.Strict  as H
 import           Data.Util.RationalF
 
 
--- Note: probably not useful
--- can instead get lots, and sum lots
--- getHoldings :: [Event] -> H.HashMap Currency.Crypto RationalF
--- getHoldings events = H.fromListWith (+) (events >>= pairs)
---   where
---     pairs :: Event -> [(Currency.Crypto, RationalF)]
---     pairs = \case PurchaseEvent _ p -> pure (purchaseCrypto p, purchaseAmount p)
---                   SaleEvent     _ s -> pure (saleCrypto s, negate $ saleAmount s)
---                   TransferEvent _ _ -> mempty -- TODO: subtract fees
---                   TradeEvent    _ t ->
---                       [ (tradeFrom t, negate $ tradeAmountFrom t)
---                       , (tradeTo t, tradeAmountTo t)
---                       ]
-
 data TaxableEvent = TaxableEvent
     { taxableEventCurrency   :: Currency.Fiat
     , taxableEventNet        :: RationalF
     , taxableEventUnderlying :: Event
     , taxableEventLotsUsed   :: [Lot]
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
+
+instance ToJSON TaxableEvent
 
 -- * get events
 -- * sort by timestamp
@@ -74,7 +64,9 @@ data Lot = Lot
     , lotCostBasis :: RationalF
     , lotLocation  :: Location
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
+
+instance ToJSON Lot
 
 computeLots :: [Event] -> [Lot]
 computeLots = fst . foldl findTaxableEventWithLots mempty

@@ -1,0 +1,29 @@
+{
+  "tag": "PurchaseEvent",
+  "contents": {
+    "purchaseCrypto": {
+      "tag": "BTC"
+    },
+    "purchasePrice": "1000.0",
+    "purchaseTime": "2017-12-01T00:00:00Z",
+    "purchaseFiat": "USD",
+    "purchaseAmount": "1.0",
+    "purchaseFee": "1.0",
+    "purchaseExchange": "Coinbase"
+  }
+}
+
+{
+  "tag": "SaleEvent",
+  "contents": {
+    "saleCrypto": {
+      "tag": "BTC"
+    },
+    "salePrice": "1100.0",
+    "saleTime": "2017-12-01T01:00:00Z",
+    "saleFiat": "USD",
+    "saleAmount": "0.8",
+    "saleFee": "1.0",
+    "saleExchange": "Coinbase"
+  }
+}

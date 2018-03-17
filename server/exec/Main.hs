@@ -1,6 +1,7 @@
 module Main ( main ) where
 
-import qualified Data.Test
+import qualified Server
+-- import qualified Data.Test
 
 -- import           Options.Generic
 --
@@ -13,4 +14,5 @@ import qualified Data.Test
 -- main = getRecord "BIP39" >>= \case
 
 main :: IO ()
-main = Data.Test.main
+main = Server.runServer
+-- main = Data.Test.main

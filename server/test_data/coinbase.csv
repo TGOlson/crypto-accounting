@@ -1,0 +1,28 @@
+Transactions
+User,tydotg@gmail.com,582d0437788c9e08d8946fe8
+Account,BTC Wallet,582d0437788c9e08d8946ff1
+
+Timestamp,Balance,Amount,Currency,To,Notes,Instantly Exchanged,Transfer Total,Transfer Total Currency,Transfer Fee,Transfer Fee Currency,Transfer Payment Method,Transfer ID,Order Price,Order Currency,Order BTC,Order Tracking Code,Order Custom Parameter,Order Paid Out,Recurring Payment ID,Coinbase ID (visit https://www.coinbase.com/transactions/[ID] in your browser),Bitcoin Hash (visit https://www.coinbase.com/tx/[HASH] in your browser for more info)
+2016-11-19 13:01:56 -0800,0.01703591,0.01703591,BTC,582d0437788c9e08d8946ff1,"Bought 0.01703591 BTC for $13.00 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Monday Nov 28, 2016.",false,13.0,USD,0.19,USD,"BANK OF AMERICA, N.A. ********7313",5830bdc1b914004443290bbd,"","","","","","","",5830bdc49d6a251f8a137fab,""
+2016-11-20 13:42:27 -0800,0.0669535,0.04991759,BTC,582d0437788c9e08d8946ff1,"Bought 0.04991759 BTC for $37.00 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Monday Nov 28, 2016.",false,37.0,USD,0.54,USD,"BANK OF AMERICA, N.A. ********7313",583218c031159209ae8182df,"","","","","","","",583218c3c1b2197f6140b889,""
+2016-11-21 09:53:06 -0800,0.1068295,0.039876,BTC,582d0437788c9e08d8946ff1,"Bought 0.039876 BTC for $30.00 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Monday Nov 28, 2016.",false,30.0,USD,0.44,USD,"BANK OF AMERICA, N.A. ********7313",58333478c747725c59573e85,"","","","","","","",58333482a0e26e35e11ca0a1,""
+2016-11-29 10:16:24 -0800,0.0,-0.1068295,BTC,1Kogi8h5vjeoXkG7TZqJdHuYZ1ZwM6mxWE,Hi ty,false,"","","","","","","","","","","","","",583dc5f8cc4bf005068aca99,4bba96bbdc3b306aeb5c0b096830c1f48796354b9d4514508d0cbe2cb4877dbf
+2016-12-07 16:43:17 -0800,0.32067887,0.32067887,BTC,582d0437788c9e08d8946ff1,"Bought 0.32067887 BTC for $250.00 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Tuesday Dec 13, 2016.",false,250.0,USD,3.67,USD,"BANK OF AMERICA, N.A. ********7313",5848ac9ee40106025c70f7c8,"","","","","","","",5848aca5e40106025c70f7d8,""
+2016-12-21 22:34:04 -0800,0.04,-0.28067887,BTC,1Kogi8h5vjeoXkG7TZqJdHuYZ1ZwM6mxWE,"",false,"","","","","","","","","","","","","",585b73dc6bfea615984d4a6d,327383971cc2345805a4f321bb46b441105990f7e4eec92c954fe36777beb089
+2016-12-24 14:13:05 -0800,0.0,-0.04,BTC,15bF33PQZUhqNBSfWYFeKxxeN3iZYx4hEW,merry xmas,false,"","","","","","","","","","","","","",585ef2f11d697a1e79ec48f4,eef8675aad30640c1da5176de43ff0b74d3d43d8f985b1dadfce469d75d63905
+2016-12-27 13:37:08 -0800,0.10654364,0.10654364,BTC,582d0437788c9e08d8946ff1,"Bought 0.10654364 BTC for $101.49 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Tuesday Jan  3, 2017.",false,101.49,USD,1.49,USD,"BANK OF AMERICA, N.A. ********7313",5862df0402373e00015d6cd3,"","","","","","",5862df042ee3cd40ed538feb,5862df0402373e00015d6cde,""
+2017-01-03 13:45:41 -0800,0.20379001,0.09724637,BTC,582d0437788c9e08d8946ff1,"Bought 0.09724637 BTC for $101.49 USD.
+
+Paid for with BANK OF AMERICA, N.A. ********7313. Your BTC will arrive by the end of day on Tuesday Jan 10, 2017.",false,101.49,USD,1.49,USD,"BANK OF AMERICA, N.A. ********7313",586c1b7c1f8a5800018637e3,"","","","","","",5862df042ee3cd40ed538feb,586c1b841f8a580001863880,""
+2017-01-05 10:29:18 -0800,0.09724637,-0.10654364,BTC,13Gzh8WMbXoL2zi9CAjC9vs1qErZVkX2nD,"",false,"","","","","","","","","","","","","",586e907d209807574aac33ca,523ccbe5e09af154f26ef5a9908a79d3f9672cf2630a1f8f43fdfac96d79ea1a
+2017-01-12 10:07:51 -0800,0.0,-0.09724637,BTC,13Gzh8WMbXoL2zi9CAjC9vs1qErZVkX2nD,"",false,"","","","","","","","","","","","","",5877c5f61ac76d02f9dcabef,e5538e4cbf9585ae1c43e01b921db552ad87d5fd0ee61285523493314830e9c7

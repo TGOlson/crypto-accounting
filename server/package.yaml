@@ -14,6 +14,7 @@ extra-source-files:
 ghc-options: -Wall
 
 default-extensions:
+  - DataKinds
   - DeriveDataTypeable
   - DeriveGeneric
   - DisambiguateRecordFields
@@ -23,20 +24,32 @@ default-extensions:
   - OverloadedStrings
   - ScopedTypeVariables
   - StandaloneDeriving
+  - TypeOperators
 
 dependencies:
+  - aeson
   - base >= 4.7 && < 5
   - bytestring
   - cassava
   - containers
   - hashable
+  - http-types
+  - lens
   - optparse-generic
   - safe
   - scientific
+  - servant
+  - servant-client
+  - servant-server
   - stringsearch
+  - text
   - time
   - unordered-containers
   - vector
+  - wai
+  - wai-extra
+  - warp
+  - wreq
 
 library:
   source-dirs: lib
@@ -49,6 +62,7 @@ library:
     - Data.Exchange.Types
     - Data.Exchange.Coinbase
     - Data.Exchange.Gemini
+    - Server
 
 executables:
   crypto-accounting:

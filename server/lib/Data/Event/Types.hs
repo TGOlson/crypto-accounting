@@ -4,11 +4,12 @@ module Data.Event.Types
     , Sale(..)
     , Transfer(..)
     , Trade(..)
-    , TradeItem(..)
     , Location(..)
     ) where
 
+import           Data.Aeson
 import           Data.Time
+import           GHC.Generics
 
 import qualified Data.Currency.Crypto as Currency
 import qualified Data.Currency.Fiat   as Currency
@@ -21,12 +22,17 @@ data Event
     | SaleEvent     Sale
     | TransferEvent Transfer
     | TradeEvent    Trade
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
+
+instance ToJSON Event
+instance FromJSON Event
 
 
 data Location = ExchangeLocation Exchange | PrivateWalletLocation | UnknownLocation
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
 
+instance ToJSON Location
+instance FromJSON Location
 
 data Purchase = Purchase
     { purchaseTime     :: UTCTime
@@ -37,8 +43,10 @@ data Purchase = Purchase
     , purchasePrice    :: RationalF
     , purchaseFee      :: RationalF -- assume fee is always in FIAT
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
 
+instance ToJSON Purchase
+instance FromJSON Purchase
 
 data Sale = Sale
     { saleTime     :: UTCTime
@@ -49,8 +57,10 @@ data Sale = Sale
     , salePrice    :: RationalF
     , saleFee      :: RationalF -- assume fee is always in FIAT
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
 
+instance ToJSON Sale
+instance FromJSON Sale
 
 data Transfer = Transfer
     { transferTime   :: UTCTime
@@ -61,14 +71,10 @@ data Transfer = Transfer
     , transferFee    :: RationalF
     -- , transferAddress   :: String -- TODO: might be nice to have to private wallets
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
 
-data TradeItem = TradeItem
-    { tradeItemCrypto          :: Currency.Crypto
-    , tradeItemAmount          :: RationalF
-    , tradeItemUnderlyingValue :: RationalF
-    }
-  deriving (Eq, Show)
+instance ToJSON Transfer
+instance FromJSON Transfer
 
 data Trade = Trade
     { tradeTime                    :: UTCTime
@@ -81,4 +87,7 @@ data Trade = Trade
     , tradeItemUnderlyingValueFiat :: Currency.Fiat
     , tradeItemUnderlyingValue     :: RationalF
     }
-  deriving (Eq, Show)
+  deriving (Eq, Generic, Show)
+
+instance ToJSON Trade
+instance FromJSON Trade
